@@ -18,6 +18,7 @@ function runInvestment(calculationFigures) {
     expectedReturn,
     duration,
   });
+  return returned;
 }
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
   const [inputValue, setInputValue] = useState();
   const [calcType, setCalcType] = useState();
   const [calculationFigures, setCalculationFigures] = useState([]);
+  let returnedValue = [];
 
   function handleCalculation(value, calculationType) {
     setInputValue(value);
@@ -49,9 +51,8 @@ function App() {
   }
 
   if (calculationFigures.length === 4) {
-    runInvestment(calculationFigures);
+    returnedValue = runInvestment(calculationFigures);
   }
-  console.log("the calculation figures are currently: ", calculationFigures);
 
   return (
     <>
@@ -90,9 +91,8 @@ function App() {
             />
           </div>
         </div>
-
         <div id="results">
-          <ResultsBoard result={inputValue} calcType={calcType} />
+          <ResultsBoard result={returnedValue} />
         </div>
       </main>
     </>

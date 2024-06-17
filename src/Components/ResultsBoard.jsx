@@ -1,4 +1,4 @@
-export default function ResultsBoard({ result, calcType }) {
+export default function ResultsBoard({ result }) {
   const TABLE_HEADERS = [
     { type: "duration", Header: "Year" },
     { type: "initial-investment", Header: "Investment Value" },
@@ -16,26 +16,21 @@ export default function ResultsBoard({ result, calcType }) {
     return tableHeaders;
   }
 
-  function ResultRow(result, calcType) {
-    let tableHeaders = TABLE_HEADERS.map((x) => {
-      // I want to map the result to the correct table header
-      const headerType = x.type;
-      switch (headerType) {
-        case "duration":
-          return <td key={x.Header}>{result}</td>;
-        case "initial-investment":
-          return <td key={x.Header}>{result}</td>;
-        case "interest-annually":
-          return <td key={x.Header}>{result}</td>;
-        case "interest-total":
-          return <td key={x.Header}>{result}</td>;
-        case "investment-capital":
-          return <td key={x.Header}>{result}</td>;
-        default:
-          return null;
-      }
-    });
-    return tableHeaders;
+  function ResultRow() {
+    if (result.length > 0) {
+      console.log("this", result);
+      let resultData = result.map((item) => (
+        <tr>
+          <td key={item.year}>{item.year}</td>
+          <td key={item.annualInvestment}>{item.annualInvestment}</td>
+          <td key={item.valueEndOfYear}>{item.valueEndOfYear}</td>
+          <td key={item.interest}>{item.interest}</td>
+        </tr>
+      ));
+
+      return resultData;
+    }
+    return null;
   }
 
   return (
@@ -44,9 +39,7 @@ export default function ResultsBoard({ result, calcType }) {
         <thead>
           <tr>{HeaderRow()}</tr>
         </thead>
-        <tbody>
-          <tr>{ResultRow(result, calcType)}</tr>
-        </tbody>
+        <tbody>{ResultRow()}</tbody>
       </table>
     </>
   );
