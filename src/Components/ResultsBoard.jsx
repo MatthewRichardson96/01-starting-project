@@ -1,21 +1,42 @@
-export default function ResultsBoard({ result, calculationType }) {
+export default function ResultsBoard({ result, calcType }) {
   const TABLE_HEADERS = [
-    { Header: "Year" },
-    { Header: "Investment Value" },
-    { Header: "Interest(Year)" },
-    { Header: "Total Interest" },
-    { Header: "Invested Capital" },
+    { type: "duration", Header: "Year" },
+    { type: "initial-investment", Header: "Investment Value" },
+    { type: "interest-annually", Header: "Interest(Year)" },
+    { type: "interest-total", Header: "Total Interest" },
+    { type: "investment-capital", Header: "Invested Capital" },
   ];
 
   function HeaderRow() {
     let tableHeaders = TABLE_HEADERS.map((x) => (
-      <th key={x.Header}>{x.Header}</th>
+      <th key={x.Header} id={x.Header}>
+        {x.Header}
+      </th>
     ));
-    console.log(tableHeaders);
     return tableHeaders;
   }
 
-  console.log("result passed: " + calculationType + " - " + result);
+  function ResultRow(result, calcType) {
+    let tableHeaders = TABLE_HEADERS.map((x) => {
+      // I want to map the result to the correct table header
+      const headerType = x.type;
+      switch (headerType) {
+        case "duration":
+          return <td key={x.Header}>{result}</td>;
+        case "initial-investment":
+          return <td key={x.Header}>{result}</td>;
+        case "interest-annually":
+          return <td key={x.Header}>{result}</td>;
+        case "interest-total":
+          return <td key={x.Header}>{result}</td>;
+        case "investment-capital":
+          return <td key={x.Header}>{result}</td>;
+        default:
+          return null;
+      }
+    });
+    return tableHeaders;
+  }
 
   return (
     <>
@@ -24,9 +45,7 @@ export default function ResultsBoard({ result, calculationType }) {
           <tr>{HeaderRow()}</tr>
         </thead>
         <tbody>
-          <tr>
-            <td key="tempValue">{result}</td>
-          </tr>
+          <tr>{ResultRow(result, calcType)}</tr>
         </tbody>
       </table>
     </>

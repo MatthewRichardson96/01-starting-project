@@ -4,28 +4,54 @@ import ResultsBoard from "./Components/ResultsBoard";
 import { useState } from "react";
 import { calculateInvestmentResults } from "./util/investment";
 
-function runInvestment(
-  initialInvestment,
-  annualInvestment,
-  expectedReturn,
-  duration
-) {
-  if (initialInvestment && annualInvestment && expectedReturn && duration) {
-    calculateInvestmentResults();
-  }
-  console.log("this is the outputted investment:");
+// The below code needs reviewing and refactoring
+function runInvestment(calculationFigures) {
+  const values = calculationFigures.map((figure) => Object.values(figure)[0]);
+
+  // mapping the values to the objects needed for the calculateInvestmentResults function
+  const [initialInvestment, annualInvestment, expectedReturn, duration] =
+    values;
+
+  const returned = calculateInvestmentResults({
+    initialInvestment,
+    annualInvestment,
+    expectedReturn,
+    duration,
+  });
 }
 
 function App() {
   // The input value and handleCalculation has been lifted from the calculationBoard.jsx
   const [inputValue, setInputValue] = useState();
+  const [calcType, setCalcType] = useState();
+  const [calculationFigures, setCalculationFigures] = useState([]);
 
   function handleCalculation(value, calculationType) {
-    console.log("val " + value);
-    console.log("calculation type " + calculationType);
     setInputValue(value);
-    runInvestment(value);
+    setCalcType(calculationType);
+
+    setCalculationFigures((prevCalculationFigures) => {
+      const index = prevCalculationFigures.findIndex(
+        (figure) => Object.keys(figure)[0] === calculationType
+      );
+      if (index !== -1) {
+        // If an object with the same calculationType exists, update its value
+        return [
+          ...prevCalculationFigures.slice(0, index),
+          { [calculationType]: value },
+          ...prevCalculationFigures.slice(index + 1),
+        ];
+      } else {
+        // If no such object exists, add a new one
+        return [...prevCalculationFigures, { [calculationType]: value }];
+      }
+    });
   }
+
+  if (calculationFigures.length === 4) {
+    runInvestment(calculationFigures);
+  }
+  console.log("the calculation figures are currently: ", calculationFigures);
 
   return (
     <>
@@ -66,7 +92,7 @@ function App() {
         </div>
 
         <div id="results">
-          <ResultsBoard result={inputValue} calculationType="gr" />
+          <ResultsBoard result={inputValue} calcType={calcType} />
         </div>
       </main>
     </>
