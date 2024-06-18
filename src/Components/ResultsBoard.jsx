@@ -1,3 +1,5 @@
+import { formatter } from "../util/investment";
+
 export default function ResultsBoard({ result }) {
   const TABLE_HEADERS = [
     { type: "duration", Header: "Year" },
@@ -18,17 +20,27 @@ export default function ResultsBoard({ result }) {
 
   function ResultRow() {
     if (result.length > 0) {
-      console.log("this", result);
-      let resultData = result.map((item) => (
-        <tr>
-          <td key={item.year}>{item.year}</td>
-          <td key={item.annualInvestment}>{item.annualInvestment}</td>
-          <td key={item.valueEndOfYear}>{item.valueEndOfYear}</td>
-          <td key={item.interest}>{item.interest}</td>
-        </tr>
-      ));
+      const InitialInvestment =
+        result[0].valueEndOfYear -
+        result[0].interest -
+        result[0].annualInvestment;
+      return result.map((item) => {
+        const totalInterestValue =
+          item.valueEndOfYear -
+          item.annualInvestment * item.year -
+          InitialInvestment;
+        const totalAmountInvested = item.valueEndOfYear - totalInterestValue;
 
-      return resultData;
+        return (
+          <tr key={item.year}>
+            <td>{item.year}</td>
+            <td>{formatter.format(item.valueEndOfYear)}</td>
+            <td>{formatter.format(item.interest)}</td>
+            <td>{formatter.format(totalInterestValue)}</td>
+            <td>{formatter.format(totalAmountInvested)}</td>
+          </tr>
+        );
+      });
     }
     return null;
   }

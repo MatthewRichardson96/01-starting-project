@@ -1,25 +1,8 @@
-import CalculationBoard from "./Components/CalculationBoard";
-import Header from "./Components/Header";
-import ResultsBoard from "./Components/ResultsBoard";
+import CalculationBoard from "./components/CalculationBoard";
+import Header from "./components/Header";
+import ResultsBoard from "./components/ResultsBoard";
 import { useState } from "react";
 import { calculateInvestmentResults } from "./util/investment";
-
-// The below code needs reviewing and refactoring
-function runInvestment(calculationFigures) {
-  const values = calculationFigures.map((figure) => Object.values(figure)[0]);
-
-  // mapping the values to the objects needed for the calculateInvestmentResults function
-  const [initialInvestment, annualInvestment, expectedReturn, duration] =
-    values;
-
-  const returned = calculateInvestmentResults({
-    initialInvestment,
-    annualInvestment,
-    expectedReturn,
-    duration,
-  });
-  return returned;
-}
 
 function App() {
   // The input value and handleCalculation has been lifted from the calculationBoard.jsx
@@ -27,6 +10,7 @@ function App() {
   const [calcType, setCalcType] = useState();
   const [calculationFigures, setCalculationFigures] = useState([]);
   let returnedValue = [];
+  let inputIsValid = false;
 
   function handleCalculation(value, calculationType) {
     setInputValue(value);
@@ -50,15 +34,30 @@ function App() {
     });
   }
 
+  function runInvestment(calculationFigures) {
+    const values = calculationFigures.map((figure) => Object.values(figure)[0]);
+
+    // mapping the values to the objects needed for the calculateInvestmentResults function
+    const [initialInvestment, annualInvestment, expectedReturn, duration] =
+      values;
+
+    inputIsValid = duration >= 1;
+    const returned = calculateInvestmentResults({
+      initialInvestment: parseFloat(initialInvestment),
+      annualInvestment: parseFloat(annualInvestment),
+      expectedReturn: parseFloat(expectedReturn),
+      duration: parseInt(duration),
+    });
+    return returned;
+  }
   if (calculationFigures.length === 4) {
+    returnedValue = [];
     returnedValue = runInvestment(calculationFigures);
   }
 
   return (
     <>
-      <header>
-        <Header />
-      </header>
+      <Header />
 
       <main>
         <div id="user-input">
@@ -92,7 +91,13 @@ function App() {
           </div>
         </div>
         <div id="results">
-          <ResultsBoard result={returnedValue} />
+          {inputIsValid ? (
+            <ResultsBoard result={returnedValue} />
+          ) : (
+            <p className="center">
+              Enter the investment details to see results
+            </p>
+          )}
         </div>
       </main>
     </>
